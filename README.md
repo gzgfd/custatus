@@ -1,2 +1,0 @@
-# custatus
-clickup status
