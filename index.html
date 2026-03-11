@@ -1,398 +1,144 @@
-<!--
-Save this as: index.html
-Then enable GitHub Pages:
-Repo → Settings → Pages → Build and deployment → Deploy from a branch → main / (root)
-Use the resulting Pages URL in ClickUp (Website/Embed).
--->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Team Availability</title>
-  <style>
-    :root{
-      --bg:#f5f6f8;
-      --card:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --shadow: 0 2px 10px rgba(0,0,0,.06);
-      --green:#22c55e;
-      --amber:#f59e0b;
-      --gray:#9ca3af;
-      --radius:12px;
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 14px;
-    }
-
-    .header{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom: 12px;
-    }
-    .titleRow{ display:flex; align-items:center; gap:10px; }
-    .statusDot{
-      width:14px;height:14px;border-radius:999px;
-      background: var(--gray);
-      box-shadow: 0 0 0 3px rgba(156,163,175,.22);
-      flex:0 0 auto;
-    }
-    h1{ margin:0; font-size:15px; font-weight:800; letter-spacing:.2px; }
-    .sub{
-      margin:4px 0 0 24px;
-      font-size:12px;
-      color: var(--muted);
-      line-height:1.35;
-      max-width: 780px;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border:1px solid var(--border);
-      border-radius:999px;
-      background: rgba(255,255,255,.75);
-      color: var(--muted);
-      font-size:12px;
-      white-space:nowrap;
-    }
-    .pill b{ color: var(--text); }
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 10px;
-    }
-
-    .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 12px;
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      min-height: 90px;
-    }
-
-    .avatar{
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight: 900;
-      font-size: 12px;
-      color: #fff;
-      flex: 0 0 auto;
-      position: relative;
-    }
-    .avatar .dot{
-      position:absolute;
-      right:-2px;
-      bottom:-2px;
-      width:12px;
-      height:12px;
-      border-radius:999px;
-      border:2px solid #fff;
-      box-shadow: 0 0 0 1px var(--border);
-      background: var(--gray);
-    }
-    .dot.online{ background: var(--green); }
-    .dot.away{ background: var(--amber); }
-    .dot.offline{ background: var(--gray); }
-
-    .meta{ flex:1; min-width:0; }
-    .top{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 2px;
-    }
-    .name{
-      margin:0;
-      font-size: 13px;
-      font-weight: 900;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .role{
-      margin:2px 0 0 0;
-      font-size: 11px;
-      color: var(--muted);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .right{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap: 4px;
-      flex: 0 0 auto;
-      text-align:right;
-    }
-    .time{
-      font-size: 13px;
-      font-weight: 900;
-      font-variant-numeric: tabular-nums;
-    }
-    .tz{
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 800;
-    }
-    .statusText{
-      font-size: 11px;
-      font-weight: 800;
-    }
-    .statusText.online{ color:#16a34a; }
-    .statusText.away{ color:#d97706; }
-    .statusText.offline{ color:#6b7280; }
-
-    .mail{
-      margin-top: 6px;
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-decoration:none;
-      color: var(--text);
-    }
-    .mail:hover{ box-shadow: 0 2px 10px rgba(0,0,0,.08); }
-
-    .footer{
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--muted);
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    code.kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 6px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.75);
-      color: var(--text);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Status</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f6f8;
+    padding: 16px;
+    color: #1a1f36;
+  }
+  .header { margin-bottom: 14px; }
+  .header h1 { font-size: 15px; font-weight: 700; }
+  .header p { font-size: 11px; color: #6b7280; margin-top: 2px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    position: relative;
+  }
+  .dot {
+    position: absolute; bottom: -1px; right: -1px;
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid #fff;
+  }
+  .dot.online { background: #22c55e; }
+  .dot.away { background: #f59e0b; }
+  .dot.offline { background: #9ca3af; }
+  .info { flex: 1; min-width: 0; }
+  .name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .role { font-size: 10px; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .right { text-align: right; flex-shrink: 0; }
+  .time { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tz { font-size: 10px; color: #9ca3af; }
+  .status-text { font-size: 10px; margin-top: 1px; }
+  .status-text.online { color: #22c55e; }
+  .status-text.away { color: #f59e0b; }
+  .status-text.offline { color: #9ca3af; }
+  a.card { text-decoration: none; color: inherit; }
+</style>
 </head>
 <body>
-  <div class="header">
-    <div>
-      <div class="titleRow">
-        <div class="statusDot" id="coverageDot" aria-hidden="true"></div>
-        <h1>Team Availability</h1>
+
+<div class="header">
+  <h1>🟢 Team Availability</h1>
+  <p id="summary"></p>
+</div>
+<div class="grid" id="grid"></div>
+
+<script>
+const team = [
+  { name:"Greg Zwickl", role:"VP, Web Development", email:"greg.zwickl@gofishdigital.com", tz:"EST", offset:-5, initials:"GZ", color:"#1e40af" },
+  { name:"Maryam Ali", role:"Web Project Manager", email:"maryam.ali@gofishdigital.com", tz:"EST", offset:-5, initials:"MA", color:"#7c3aed" },
+  { name:"Laurentiu Danu", role:"Web Developer", email:"laurentiu.danu@gofishdigital.com", tz:"EEST", offset:2, initials:"LD", color:"#3b82f6" },
+  { name:"Erwin Bantilan", role:"Web Developer", email:"erwin.bantilan@gofishdigital.com", tz:"PHT", offset:8, initials:"EB", color:"#8b5cf6" },
+  { name:"Corey King", role:"Web Developer", email:"corey.king@gofishdigital.com", tz:"EST", offset:-5, initials:"CK", color:"#ec4899" },
+  { name:"Eli Fuentes", role:"Jr. Web Developer", email:"elias.fuentes@gofishdigital.com", tz:"PST", offset:-8, initials:"EF", color:"#14b8a6" },
+  { name:"Sam Shumake", role:"Web Developer", email:"sam.shumake@gofishdigital.com", tz:"EST", offset:-5, initials:"SS", color:"#f97316" },
+  { name:"Vijay Mishra", role:"Web Developer", email:"vijay.mishra@gofishdigital.com", tz:"EST", offset:-5, initials:"VM", color:"#0ea5e9" },
+  { name:"Donald Ngo", role:"Web Production Analyst", email:"donald.ngo@gofishdigital.com", tz:"PHT", offset:8, initials:"DN", color:"#6366f1" },
+  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tz:"EST", offset:-5, initials:"PJ", color:"#84cc16", schedule:{0:null,1:[12,17],2:[12,17],3:[8,15],4:[12,17],5:null,6:null} },
+];
+
+const statusLabel = { online:"Online", away:"Flex hours", offline:"Offline" };
+const statusOrder = { online:0, away:1, offline:2 };
+
+function getStatus(dev) {
+  const now = new Date();
+  const h = (now.getUTCHours() + dev.offset + 24) % 24;
+  const m = now.getUTCMinutes();
+  const period = h >= 12 ? "PM" : "AM";
+  const dh = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  const time = dh + ":" + String(m).padStart(2,"0") + " " + period;
+
+  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours() + dev.offset));
+  const day = d.getUTCDay();
+
+  let status = "offline";
+
+  if (dev.schedule) {
+    const hours = dev.schedule[day];
+    if (hours) {
+      if (h >= hours[0] && h < hours[1]) status = "online";
+      else if ((h >= hours[0]-1 && h < hours[0]) || (h >= hours[1] && h < hours[1]+1)) status = "away";
+    }
+  } else {
+    const weekday = day >= 1 && day <= 5;
+    if (weekday) {
+      if (h >= 9 && h < 18) status = "online";
+      else if ((h >= 8 && h < 9) || (h >= 18 && h < 19)) status = "away";
+    }
+  }
+  return { status, time };
+}
+
+function update() {
+  const sorted = [...team].sort((a,b) => statusOrder[getStatus(a).status] - statusOrder[getStatus(b).status]);
+  const onlineCount = team.filter(d => getStatus(d).status === "online").length;
+  document.getElementById("summary").textContent = onlineCount + " of " + team.length + " online · updates every minute";
+
+  document.getElementById("grid").innerHTML = sorted.map(d => {
+    const { status, time } = getStatus(d);
+    return `<a class="card" href="mailto:${d.email}" title="${d.email}">
+      <div class="avatar" style="background:${d.color}">
+        ${d.initials}
+        <span class="dot ${status}"></span>
       </div>
-      <div class="sub" id="coverageText">
-        Coverage window (EST / GMT-5): Mon 12–5, Tue 12–5, Wed 8–3, Thu 12–5 (~22 hrs/wk).
-        <span id="coverageNow"></span>
+      <div class="info">
+        <div class="name">${d.name}</div>
+        <div class="role">${d.role}</div>
       </div>
-    </div>
-
-    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-      <div class="pill" title="Schedule reference timezone">
-        Schedule timezone: <b>EST (GMT-5)</b>
+      <div class="right">
+        <div class="time">${time}</div>
+        <div class="tz">${d.tz}</div>
+        <div class="status-text ${status}">${statusLabel[status]}</div>
       </div>
-      <div class="pill" title="Auto-refresh">
-        Updates: <b>every minute</b>
-      </div>
-    </div>
-  </div>
+    </a>`;
+  }).join("");
+}
 
-  <div class="grid" id="grid"></div>
-
-  <div class="footer">
-    <div>Logic: <code class="kbd">Online</code> if current time falls inside the EST coverage schedule; <code class="kbd">Offline</code> otherwise.</div>
-    <div id="onlineCount">—</div>
-  </div>
-
-  <script>
-    /**
-     * Notes:
-     * - Uses fixed GMT offsets (no DST adjustment), matching your provided offsets.
-     * - Coverage schedule is evaluated in EST (GMT-5).
-     */
-
-    const TEAM = [
-      { name: "Greg Zwickl", role: "VP, Web Development", email: "greg.zwickl@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"GZ", color:"#1e40af" },
-      { name: "Maryam Ali", role: "Web Project Manager", email: "maryam.ali@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"MA", color:"#7c3aed" },
-      { name: "Laurentiu Danu", role: "Web Developer", email: "laurentiu.danu@gofishdigital.com", tzLabel: "EEST", gmtOffsetHours:  2, initials:"LD", color:"#3b82f6" },
-      { name: "Erwin Bantilan", role: "Web Developer", email: "erwin.bantilan@gofishdigital.com", tzLabel: "PHT", gmtOffsetHours:  8, initials:"EB", color:"#8b5cf6" },
-      { name: "Corey King", role: "Web Developer", email: "corey.king@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"CK", color:"#0ea5e9" },
-      { name: "Eli Fuentes", role: "Jr. Web Developer", email: "elias.fuentes@gofishdigital.com", tzLabel: "PST", gmtOffsetHours: -8, initials:"EF", color:"#14b8a6" },
-      { name: "Sam Shumake", role: "Web Developer", email: "sam.shumake@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"SS", color:"#f97316" },
-      { name: "Vijay Mishra", role: "Web Developer", email: "vijay.mishra@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"VM", color:"#2563eb" },
-      { name: "Donald Ngo", role: "Web Production Analyst", email: "donald.ngo@gofishdigital.com", tzLabel: "PHT", gmtOffsetHours:  8, initials:"DN", color:"#6366f1" },
-      { name: "Parker Jenkins", role: "Web Production Intern", email: "parker.jenkins@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"PJ", color:"#84cc16" },
-    ];
-
-    const COVERAGE_TZ = { label: "EST", gmtOffsetHours: -5 };
-
-    // Coverage windows in EST (GMT-5): day 0=Sun ... 6=Sat
-    const COVERAGE_SCHEDULE = [
-      { day: 1, start: "12:00", end: "17:00" }, // Mon
-      { day: 2, start: "12:00", end: "17:00" }, // Tue
-      { day: 3, start: "08:00", end: "15:00" }, // Wed
-      { day: 4, start: "12:00", end: "17:00" }, // Thu
-    ];
-
-    const pad2 = (n) => String(n).padStart(2, "0");
-    const parseHHMM = (hhmm) => {
-      const [h, m] = hhmm.split(":").map(Number);
-      return { h, m: isNaN(m) ? 0 : m };
-    };
-    const minutesSinceMidnight = (date) => date.getHours() * 60 + date.getMinutes();
-
-    function dateInGmtOffset(nowLocal, gmtOffsetHours){
-      const utcMillis = nowLocal.getTime() + nowLocal.getTimezoneOffset() * 60 * 1000;
-      return new Date(utcMillis + gmtOffsetHours * 60 * 60 * 1000);
-    }
-
-    function formatTime(date){
-      const h = date.getHours();
-      const m = date.getMinutes();
-      const ampm = h >= 12 ? "PM" : "AM";
-      const hr12 = ((h + 11) % 12) + 1;
-      return `${hr12}:${pad2(m)} ${ampm}`;
-    }
-
-    function coverageStatus(nowLocal){
-      const nowCoverage = dateInGmtOffset(nowLocal, COVERAGE_TZ.gmtOffsetHours);
-      const dow = nowCoverage.getDay();
-      const mins = minutesSinceMidnight(nowCoverage);
-
-      const todays = COVERAGE_SCHEDULE.filter(s => s.day === dow);
-      if (!todays.length) return { online:false, nowCoverage };
-
-      for (const w of todays){
-        const start = parseHHMM(w.start);
-        const end = parseHHMM(w.end);
-        const startM = start.h * 60 + start.m;
-        const endM = end.h * 60 + end.m;
-        if (mins >= startM && mins < endM){
-          return { online:true, nowCoverage };
-        }
-      }
-      return { online:false, nowCoverage };
-    }
-
-    function buildCard(member){
-      const el = document.createElement("a");
-      el.className = "card";
-      el.href = `mailto:${member.email}`;
-      el.title = member.email;
-      el.style.textDecoration = "none";
-      el.style.color = "inherit";
-
-      el.innerHTML = `
-        <div class="avatar" style="background:${member.color}">
-          ${member.initials}
-          <span class="dot offline" data-dot></span>
-        </div>
-        <div class="meta">
-          <div class="top">
-            <p class="name">${member.name}</p>
-          </div>
-          <p class="role">${member.role}</p>
-        </div>
-        <div class="right">
-          <div class="time" data-time>—</div>
-          <div class="tz">${member.tzLabel} (GMT${member.gmtOffsetHours >= 0 ? "+" : ""}${member.gmtOffsetHours})</div>
-          <div class="statusText offline" data-status>Offline</div>
-          <span class="mail" aria-hidden="true" title="Email">
-            ✉️
-          </span>
-        </div>
-      `;
-
-      el._refs = {
-        dot: el.querySelector("[data-dot]"),
-        time: el.querySelector("[data-time]"),
-        status: el.querySelector("[data-status]"),
-      };
-      el._member = member;
-      return el;
-    }
-
-    const grid = document.getElementById("grid");
-    const cards = TEAM.map(m => {
-      const c = buildCard(m);
-      grid.appendChild(c);
-      return c;
-    });
-
-    const coverageDotEl = document.getElementById("coverageDot");
-    const coverageNowEl = document.getElementById("coverageNow");
-    const onlineCountEl = document.getElementById("onlineCount");
-
-    function setDot(dotEl, state){
-      dotEl.classList.remove("online","away","offline");
-      dotEl.classList.add(state);
-    }
-    function setStatusText(textEl, state, label){
-      textEl.classList.remove("online","away","offline");
-      textEl.classList.add(state);
-      textEl.textContent = label;
-    }
-
-    function tick(){
-      const now = new Date();
-      const cov = coverageStatus(now);
-
-      // Header indicator (coverage window status)
-      coverageDotEl.style.background = cov.online ? "var(--green)" : "var(--gray)";
-      coverageDotEl.style.boxShadow = cov.online ? "0 0 0 3px rgba(34,197,94,.18)" : "0 0 0 3px rgba(156,163,175,.22)";
-      coverageNowEl.textContent = ` • Now: ${formatTime(cov.nowCoverage)} ${COVERAGE_TZ.label}`;
-
-      // Everyone’s local time always updates.
-      // Activity indicator is based on coverage window (shared schedule).
-      let onlineCount = 0;
-      for (const card of cards){
-        const m = card._member;
-        const local = dateInGmtOffset(now, m.gmtOffsetHours);
-        card._refs.time.textContent = formatTime(local);
-
-        if (cov.online){
-          onlineCount++;
-          setDot(card._refs.dot, "online");
-          setStatusText(card._refs.status, "online", "Online");
-        } else {
-          setDot(card._refs.dot, "offline");
-          setStatusText(card._refs.status, "offline", "Offline");
-        }
-      }
-
-      onlineCountEl.textContent = `${onlineCount} of ${TEAM.length} online`;
-    }
-
-    tick();
-    setInterval(tick, 60 * 1000);
-  </script>
+update();
+setInterval(update, 60000);
+</script>
 </body>
 </html>
