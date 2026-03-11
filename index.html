@@ -46,7 +46,7 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* larger cards */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 10px;
   }
 
@@ -56,19 +56,19 @@
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    padding: 16px 16px; /* larger cards */
+    padding: 16px 16px;
     display: flex;
     align-items: center;
     gap: 12px;
     transition: box-shadow 0.2s, transform 0.08s, opacity 0.2s;
-    min-height: 92px; /* larger cards */
+    min-height: 104px;
   }
   .card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
 
   .avatar {
-    width: 38px; height: 38px; border-radius: 50%;
+    width: 42px; height: 42px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0;
+    font-size: 12px; font-weight: 900; color: #fff; flex-shrink: 0;
     position: relative;
   }
   .dot {
@@ -82,41 +82,61 @@
   .dot.offline { background: #9ca3af; }
 
   .info { flex: 1; min-width: 0; }
-  .name { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .name { font-size: 14px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .role { font-size: 11px; color: #6b7280; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .right { text-align: right; flex-shrink: 0; }
-  .time { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .tz { font-size: 11px; color: #6b7280; margin-top: 1px; }
-  .status-text { font-size: 11px; margin-top: 3px; font-weight: 800; }
-  .status-text.online { color: #16a34a; }
-  .status-text.away { color: #d97706; }
-  .status-text.offline { color: #6b7280; }
+  /* NEW: status row under the name (prevents blocking other content) */
+  .status-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top: 6px;
+    min-width:0;
+  }
+  .status-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding: 5px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .01em;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .status-chip .mini-dot{
+    width:8px;height:8px;border-radius:999px;
+  }
+  .status-chip.online{
+    color:#166534;
+    background: rgba(34,197,94,0.12);
+    border-color: rgba(34,197,94,0.22);
+  }
+  .status-chip.online .mini-dot{ background:#22c55e; }
+  .status-chip.away{
+    color:#92400e;
+    background: rgba(245,158,11,0.14);
+    border-color: rgba(245,158,11,0.24);
+  }
+  .status-chip.away .mini-dot{ background:#f59e0b; }
+  .status-chip.offline{
+    color:#374151;
+    background: rgba(156,163,175,0.18);
+    border-color: rgba(156,163,175,0.30);
+  }
+  .status-chip.offline .mini-dot{ background:#9ca3af; }
 
-  /* Make "offline" more obvious (entire card treatment) */
+  /* time + tz stay on the right */
+  .right { text-align: right; flex-shrink: 0; min-width: 84px; }
+  .time { font-size: 14px; font-weight: 900; font-variant-numeric: tabular-nums; }
+  .tz { font-size: 11px; color: #6b7280; margin-top: 1px; }
+
+  /* Make offline obvious but NOT with an extra badge that crowds layout */
   .card.is-offline{
     background: #f3f4f6;
     border-color: #d1d5db;
-    opacity: 0.78;
-  }
-  .card.is-offline .name{ color:#374151; }
-  .card.is-offline .role{ color:#6b7280; }
-  .card.is-offline .time{ color:#374151; }
-  .card.is-offline .status-text{
-    color:#374151;
-  }
-  .card.is-offline::after{
-    content:"OFFLINE";
-    margin-left: 10px;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: .08em;
-    color:#6b7280;
-    background: rgba(107,114,128,0.10);
-    border: 1px solid rgba(107,114,128,0.18);
-    padding: 5px 8px;
-    border-radius: 999px;
-    align-self: flex-start;
+    opacity: 0.82;
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -156,9 +176,7 @@ const team = [
   { name:"Sam Shumake", role:"Web Developer", email:"sam.shumake@gofishdigital.com", tz:"EST", offset:-5, initials:"SS", color:"#f97316" },
   { name:"Vijay Mishra", role:"Web Developer", email:"vijay.mishra@gofishdigital.com", tz:"EST", offset:-5, initials:"VM", color:"#0ea5e9" },
   { name:"Donald Ngo", role:"Web Production Analyst", email:"donald.ngo@gofishdigital.com", tz:"PHT", offset:8, initials:"DN", color:"#6366f1" },
-  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tz:"EST", offset:-5, initials:"PJ", color:"#84cc16",
-    schedule:{0:null,1:[12,17],2:[12,17],3:[8,15],4:[12,17],5:null,6:null}
-  },
+  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tz:"EST", offset:-5, initials:"PJ", color:"#84cc16", schedule:{0:null,1:[12,17],2:[12,17],3:[8,15],4:[12,17],5:null,6:null} },
 ];
 
 const statusLabel = { online:"Online", away:"Flex hours", offline:"Offline" };
@@ -170,10 +188,6 @@ function formatHHMM12(h, m){
   return dh + ":" + String(m).padStart(2,"0") + " " + period;
 }
 
-/**
- * Current time in Eastern Time (ET), with DST handled via Intl API.
- * Note: This is independent from the fixed offsets used for each person below.
- */
 function getEtNowString(){
   const now = new Date();
   return new Intl.DateTimeFormat("en-US", {
@@ -211,11 +225,13 @@ function getStatus(dev) {
   return { status, time };
 }
 
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function update() {
-  // ET clock
   document.getElementById("etNow").textContent = getEtNowString();
 
-  // Sort by status
   const sorted = [...team].sort((a,b) => statusOrder[getStatus(a).status] - statusOrder[getStatus(b).status]);
   const onlineCount = team.filter(d => getStatus(d).status === "online").length;
   document.getElementById("summary").textContent = onlineCount + " of " + team.length + " online · updates every minute";
@@ -223,19 +239,25 @@ function update() {
   document.getElementById("grid").innerHTML = sorted.map(d => {
     const { status, time } = getStatus(d);
     const offlineClass = status === "offline" ? " is-offline" : "";
-    return `<a class="card${offlineClass}" href="mailto:${d.email}" title="${d.email}">
-      <div class="avatar" style="background:${d.color}">
-        ${d.initials}
+    const label = statusLabel[status];
+    return `<a class="card${offlineClass}" href="mailto:${escapeHtml(d.email)}" title="${escapeHtml(d.email)}">
+      <div class="avatar" style="background:${escapeHtml(d.color)}">
+        ${escapeHtml(d.initials)}
         <span class="dot ${status}"></span>
       </div>
       <div class="info">
-        <div class="name">${d.name}</div>
-        <div class="role">${d.role}</div>
+        <div class="name">${escapeHtml(d.name)}</div>
+        <div class="role">${escapeHtml(d.role)}</div>
+        <div class="status-row">
+          <div class="status-chip ${status}">
+            <span class="mini-dot"></span>
+            ${escapeHtml(label)}
+          </div>
+        </div>
       </div>
       <div class="right">
-        <div class="time">${time}</div>
-        <div class="tz">${d.tz}</div>
-        <div class="status-text ${status}">${statusLabel[status]}</div>
+        <div class="time">${escapeHtml(time)}</div>
+        <div class="tz">${escapeHtml(d.tz)}</div>
       </div>
     </a>`;
   }).join("");
