@@ -78,14 +78,12 @@
     box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
   }
   .dot.online { background: #22c55e; }
-  .dot.away { background: #f59e0b; }
   .dot.offline { background: #9ca3af; }
 
   .info { flex: 1; min-width: 0; }
   .name { font-size: 14px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .role { font-size: 11px; color: #6b7280; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* NEW: status row under the name (prevents blocking other content) */
   .status-row{
     display:flex;
     align-items:center;
@@ -101,7 +99,6 @@
     border-radius: 999px;
     font-size: 11px;
     font-weight: 900;
-    letter-spacing: .01em;
     border: 1px solid transparent;
     white-space: nowrap;
   }
@@ -114,12 +111,6 @@
     border-color: rgba(34,197,94,0.22);
   }
   .status-chip.online .mini-dot{ background:#22c55e; }
-  .status-chip.away{
-    color:#92400e;
-    background: rgba(245,158,11,0.14);
-    border-color: rgba(245,158,11,0.24);
-  }
-  .status-chip.away .mini-dot{ background:#f59e0b; }
   .status-chip.offline{
     color:#374151;
     background: rgba(156,163,175,0.18);
@@ -127,15 +118,14 @@
   }
   .status-chip.offline .mini-dot{ background:#9ca3af; }
 
-  /* time + tz stay on the right */
   .right { text-align: right; flex-shrink: 0; min-width: 84px; }
   .time { font-size: 14px; font-weight: 900; font-variant-numeric: tabular-nums; }
   .tz { font-size: 11px; color: #6b7280; margin-top: 1px; }
 
-  /* Make offline obvious but NOT with an extra badge that crowds layout */
+  /* Offline card treatment (more obvious) */
   .card.is-offline{
-    background: #f3f4f6;
-    border-color: #d1d5db;
+    background: #eef0f3;
+    border-color: #cfd5dd;
     opacity: 0.82;
   }
 
@@ -157,8 +147,8 @@
     <div class="pill" title="Current time in Eastern Time (ET)">
       <span>ET now</span><strong id="etNow">—</strong>
     </div>
-    <div class="pill" title="Schedule reference timezone">
-      <span>Schedule</span><strong>ET</strong>
+    <div class="pill" title="Standard hours">
+      <span>Hours</span><strong>8:00 AM–5:00 PM</strong>
     </div>
   </div>
 </div>
@@ -176,11 +166,13 @@ const team = [
   { name:"Sam Shumake", role:"Web Developer", email:"sam.shumake@gofishdigital.com", tz:"EST", offset:-5, initials:"SS", color:"#f97316" },
   { name:"Vijay Mishra", role:"Web Developer", email:"vijay.mishra@gofishdigital.com", tz:"EST", offset:-5, initials:"VM", color:"#0ea5e9" },
   { name:"Donald Ngo", role:"Web Production Analyst", email:"donald.ngo@gofishdigital.com", tz:"PHT", offset:8, initials:"DN", color:"#6366f1" },
-  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tz:"EST", offset:-5, initials:"PJ", color:"#84cc16", schedule:{0:null,1:[12,17],2:[12,17],3:[8,15],4:[12,17],5:null,6:null} },
+  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tz:"EST", offset:-5, initials:"PJ", color:"#84cc16",
+    schedule:{0:null,1:[12,17],2:[12,17],3:[8,15],4:[12,17],5:null,6:null}
+  },
 ];
 
-const statusLabel = { online:"Online", away:"Flex hours", offline:"Offline" };
-const statusOrder = { online:0, away:1, offline:2 };
+const statusLabel = { online:"Online", offline:"Offline" };
+const statusOrder = { online:0, offline:1 };
 
 function formatHHMM12(h, m){
   const period = h >= 12 ? "PM" : "AM";
@@ -198,6 +190,12 @@ function getEtNowString(){
   }).format(now);
 }
 
+/**
+ * Rules:
+ * - Default hours (for everyone without a custom schedule): Online 8:00 AM–4:59 PM local time, weekdays only.
+ *   Offline at 5:00 PM sharp.
+ * - Parker keeps the provided custom schedule (in his local time), no "away" state.
+ */
 function getStatus(dev) {
   const now = new Date();
   const h = (now.getUTCHours() + dev.offset + 24) % 24;
@@ -209,19 +207,24 @@ function getStatus(dev) {
 
   let status = "offline";
 
+  // Custom schedule (Parker)
   if (dev.schedule) {
     const hours = dev.schedule[day];
     if (hours) {
       if (h >= hours[0] && h < hours[1]) status = "online";
-      else if ((h >= hours[0]-1 && h < hours[0]) || (h >= hours[1] && h < hours[1]+1)) status = "away";
+      else status = "offline";
+    } else {
+      status = "offline";
     }
   } else {
+    // Default: weekdays only, online at 8:00, offline at 5:00 sharp (local)
     const weekday = day >= 1 && day <= 5;
     if (weekday) {
-      if (h >= 9 && h < 18) status = "online";
-      else if ((h >= 8 && h < 9) || (h >= 18 && h < 19)) status = "away";
+      if (h >= 8 && h < 17) status = "online"; // 8:00–16:59
+      else status = "offline";                 // 17:00+
     }
   }
+
   return { status, time };
 }
 
