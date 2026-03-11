@@ -12,58 +12,137 @@
     padding: 16px;
     color: #1a1f36;
   }
-  .header { margin-bottom: 14px; }
-  .header h1 { font-size: 15px; font-weight: 700; }
-  .header p { font-size: 11px; color: #6b7280; margin-top: 2px; }
+
+  .header {
+    margin-bottom: 14px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .header-left h1 { font-size: 16px; font-weight: 800; }
+  .header-left p { font-size: 11px; color: #6b7280; margin-top: 3px; }
+
+  .header-right{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .pill{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:999px;
+    padding:8px 10px;
+    font-size:11px;
+    color:#374151;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    white-space:nowrap;
+  }
+  .pill span{ color:#6b7280; font-weight:600; margin-right:6px; }
+  .pill strong{ font-variant-numeric: tabular-nums; }
+
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* larger cards */
+    gap: 10px;
   }
+
+  a.card { text-decoration: none; color: inherit; }
+
   .card {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 12px 14px;
+    border-radius: 12px;
+    padding: 16px 16px; /* larger cards */
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: box-shadow 0.2s;
+    gap: 12px;
+    transition: box-shadow 0.2s, transform 0.08s, opacity 0.2s;
+    min-height: 92px; /* larger cards */
   }
-  .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+
   .avatar {
-    width: 32px; height: 32px; border-radius: 50%;
+    width: 38px; height: 38px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0;
     position: relative;
   }
   .dot {
-    position: absolute; bottom: -1px; right: -1px;
-    width: 10px; height: 10px; border-radius: 50%;
+    position: absolute; bottom: -2px; right: -2px;
+    width: 12px; height: 12px; border-radius: 50%;
     border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
   }
   .dot.online { background: #22c55e; }
   .dot.away { background: #f59e0b; }
   .dot.offline { background: #9ca3af; }
+
   .info { flex: 1; min-width: 0; }
-  .name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .role { font-size: 10px; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .name { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .role { font-size: 11px; color: #6b7280; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
   .right { text-align: right; flex-shrink: 0; }
-  .time { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .tz { font-size: 10px; color: #9ca3af; }
-  .status-text { font-size: 10px; margin-top: 1px; }
-  .status-text.online { color: #22c55e; }
-  .status-text.away { color: #f59e0b; }
-  .status-text.offline { color: #9ca3af; }
-  a.card { text-decoration: none; color: inherit; }
+  .time { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .tz { font-size: 11px; color: #6b7280; margin-top: 1px; }
+  .status-text { font-size: 11px; margin-top: 3px; font-weight: 800; }
+  .status-text.online { color: #16a34a; }
+  .status-text.away { color: #d97706; }
+  .status-text.offline { color: #6b7280; }
+
+  /* Make "offline" more obvious (entire card treatment) */
+  .card.is-offline{
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    opacity: 0.78;
+  }
+  .card.is-offline .name{ color:#374151; }
+  .card.is-offline .role{ color:#6b7280; }
+  .card.is-offline .time{ color:#374151; }
+  .card.is-offline .status-text{
+    color:#374151;
+  }
+  .card.is-offline::after{
+    content:"OFFLINE";
+    margin-left: 10px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .08em;
+    color:#6b7280;
+    background: rgba(107,114,128,0.10);
+    border: 1px solid rgba(107,114,128,0.18);
+    padding: 5px 8px;
+    border-radius: 999px;
+    align-self: flex-start;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .card{ transition:none; }
+    .card:hover{ transform:none; }
+  }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🟢 Team Availability</h1>
-  <p id="summary"></p>
+  <div class="header-left">
+    <h1>🟢 Team Availability</h1>
+    <p id="summary"></p>
+  </div>
+
+  <div class="header-right">
+    <div class="pill" title="Current time in Eastern Time (ET)">
+      <span>ET now</span><strong id="etNow">—</strong>
+    </div>
+    <div class="pill" title="Schedule reference timezone">
+      <span>Schedule</span><strong>ET</strong>
+    </div>
+  </div>
 </div>
+
 <div class="grid" id="grid"></div>
 
 <script>
@@ -77,19 +156,39 @@ const team = [
   { name:"Sam Shumake", role:"Web Developer", email:"sam.shumake@gofishdigital.com", tz:"EST", offset:-5, initials:"SS", color:"#f97316" },
   { name:"Vijay Mishra", role:"Web Developer", email:"vijay.mishra@gofishdigital.com", tz:"EST", offset:-5, initials:"VM", color:"#0ea5e9" },
   { name:"Donald Ngo", role:"Web Production Analyst", email:"donald.ngo@gofishdigital.com", tz:"PHT", offset:8, initials:"DN", color:"#6366f1" },
-  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tz:"EST", offset:-5, initials:"PJ", color:"#84cc16", schedule:{0:null,1:[12,17],2:[12,17],3:[8,15],4:[12,17],5:null,6:null} },
+  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tz:"EST", offset:-5, initials:"PJ", color:"#84cc16",
+    schedule:{0:null,1:[12,17],2:[12,17],3:[8,15],4:[12,17],5:null,6:null}
+  },
 ];
 
 const statusLabel = { online:"Online", away:"Flex hours", offline:"Offline" };
 const statusOrder = { online:0, away:1, offline:2 };
 
+function formatHHMM12(h, m){
+  const period = h >= 12 ? "PM" : "AM";
+  const dh = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return dh + ":" + String(m).padStart(2,"0") + " " + period;
+}
+
+/**
+ * Current time in Eastern Time (ET), with DST handled via Intl API.
+ * Note: This is independent from the fixed offsets used for each person below.
+ */
+function getEtNowString(){
+  const now = new Date();
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  }).format(now);
+}
+
 function getStatus(dev) {
   const now = new Date();
   const h = (now.getUTCHours() + dev.offset + 24) % 24;
   const m = now.getUTCMinutes();
-  const period = h >= 12 ? "PM" : "AM";
-  const dh = h === 0 ? 12 : h > 12 ? h - 12 : h;
-  const time = dh + ":" + String(m).padStart(2,"0") + " " + period;
+  const time = formatHHMM12(h, m);
 
   const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours() + dev.offset));
   const day = d.getUTCDay();
@@ -113,13 +212,18 @@ function getStatus(dev) {
 }
 
 function update() {
+  // ET clock
+  document.getElementById("etNow").textContent = getEtNowString();
+
+  // Sort by status
   const sorted = [...team].sort((a,b) => statusOrder[getStatus(a).status] - statusOrder[getStatus(b).status]);
   const onlineCount = team.filter(d => getStatus(d).status === "online").length;
   document.getElementById("summary").textContent = onlineCount + " of " + team.length + " online · updates every minute";
 
   document.getElementById("grid").innerHTML = sorted.map(d => {
     const { status, time } = getStatus(d);
-    return `<a class="card" href="mailto:${d.email}" title="${d.email}">
+    const offlineClass = status === "offline" ? " is-offline" : "";
+    return `<a class="card${offlineClass}" href="mailto:${d.email}" title="${d.email}">
       <div class="avatar" style="background:${d.color}">
         ${d.initials}
         <span class="dot ${status}"></span>
