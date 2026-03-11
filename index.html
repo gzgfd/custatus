@@ -1,414 +1,398 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!--
+Save this as: index.html
+Then enable GitHub Pages:
+Repo → Settings → Pages → Build and deployment → Deploy from a branch → main / (root)
+Use the resulting Pages URL in ClickUp (Website/Embed).
+-->
+<!doctype html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Team Availability</title>
+  <style>
+    :root{
+      --bg:#f5f6f8;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --shadow: 0 2px 10px rgba(0,0,0,.06);
+      --green:#22c55e;
+      --amber:#f59e0b;
+      --gray:#9ca3af;
+      --radius:12px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 14px;
+    }
+
+    .header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom: 12px;
+    }
+    .titleRow{ display:flex; align-items:center; gap:10px; }
+    .statusDot{
+      width:14px;height:14px;border-radius:999px;
+      background: var(--gray);
+      box-shadow: 0 0 0 3px rgba(156,163,175,.22);
+      flex:0 0 auto;
+    }
+    h1{ margin:0; font-size:15px; font-weight:800; letter-spacing:.2px; }
+    .sub{
+      margin:4px 0 0 24px;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.35;
+      max-width: 780px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background: rgba(255,255,255,.75);
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .pill b{ color: var(--text); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-height: 90px;
+    }
+
+    .avatar{
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      font-size: 12px;
+      color: #fff;
+      flex: 0 0 auto;
+      position: relative;
+    }
+    .avatar .dot{
+      position:absolute;
+      right:-2px;
+      bottom:-2px;
+      width:12px;
+      height:12px;
+      border-radius:999px;
+      border:2px solid #fff;
+      box-shadow: 0 0 0 1px var(--border);
+      background: var(--gray);
+    }
+    .dot.online{ background: var(--green); }
+    .dot.away{ background: var(--amber); }
+    .dot.offline{ background: var(--gray); }
+
+    .meta{ flex:1; min-width:0; }
+    .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 2px;
+    }
+    .name{
+      margin:0;
+      font-size: 13px;
+      font-weight: 900;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .role{
+      margin:2px 0 0 0;
+      font-size: 11px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .right{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap: 4px;
+      flex: 0 0 auto;
+      text-align:right;
+    }
+    .time{
+      font-size: 13px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .tz{
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .statusText{
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .statusText.online{ color:#16a34a; }
+    .statusText.away{ color:#d97706; }
+    .statusText.offline{ color:#6b7280; }
+
+    .mail{
+      margin-top: 6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      color: var(--text);
+    }
+    .mail:hover{ box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+
+    .footer{
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    code.kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.75);
+      color: var(--text);
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!--</p>
-<p class="p1">Save this as: index.html</p>
-<p class="p1">Then enable GitHub Pages:</p>
-<p class="p1">Repo → Settings → Pages → Build and deployment → Deploy from a branch → main / (root)</p>
-<p class="p1">Use the resulting Pages URL in ClickUp (Website/Embed).</p>
-<p class="p1">--&gt;</p>
-<p class="p1">&lt;!doctype html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Team Availability&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>:root{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--bg:#f5f6f8;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--card:#ffffff;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--text:#111827;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--muted:#6b7280;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--border:#e5e7eb;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--shadow: 0 2px 10px rgba(0,0,0,.06);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--green:#22c55e;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--amber:#f59e0b;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--gray:#9ca3af;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--radius:12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>*{ box-sizing:border-box; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin:0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--bg);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.header{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:flex-start;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-wrap:wrap;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.titleRow{ display:flex; align-items:center; gap:10px; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.statusDot{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width:14px;height:14px;border-radius:999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--gray);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 0 0 3px rgba(156,163,175,.22);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex:0 0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>h1{ margin:0; font-size:15px; font-weight:800; letter-spacing:.2px; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.sub{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin:4px 0 0 24px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>line-height:1.35;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>max-width: 780px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.pill{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:inline-flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:8px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 8px 10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,255,255,.75);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>white-space:nowrap;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.pill b{ color: var(--text); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.grid{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:grid;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.card{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--card);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: var(--radius);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: var(--shadow);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>min-height: 90px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.avatar{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 40px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 40px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 900;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #fff;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex: 0 0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position: relative;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.avatar .dot{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position:absolute;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>right:-2px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>bottom:-2px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:2px solid #fff;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 0 0 1px var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--gray);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.dot.online{ background: var(--green); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.dot.away{ background: var(--amber); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.dot.offline{ background: var(--gray); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.meta{ flex:1; min-width:0; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.top{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:flex-start;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 2px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.name{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin:0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 13px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 900;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>white-space:nowrap;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow:hidden;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-overflow:ellipsis;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.role{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin:2px 0 0 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 11px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>white-space:nowrap;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow:hidden;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-overflow:ellipsis;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.right{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-direction:column;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:flex-end;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex: 0 0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align:right;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.time{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 13px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 900;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-variant-numeric: tabular-nums;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.tz{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 11px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 800;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.statusText{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 11px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 800;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.statusText.online{ color:#16a34a; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.statusText.away{ color:#d97706; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.statusText.offline{ color:#6b7280; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.mail{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 32px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 32px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #fff;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-decoration:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.mail:hover{ box-shadow: 0 2px 10px rgba(0,0,0,.08); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.footer{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-wrap:wrap;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>code.kbd{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 11px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 2px 6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid rgba(0,0,0,.08);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,255,255,.75);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="header"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="titleRow"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="statusDot" id="coverageDot" aria-hidden="true"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Team Availability&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sub" id="coverageText"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>Coverage window (EST / GMT-5): Mon 12–5, Tue 12–5, Wed 8–3, Thu 12–5 (~22 hrs/wk).</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span id="coverageNow"&gt;&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pill" title="Schedule reference timezone"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>Schedule timezone: &lt;b&gt;EST (GMT-5)&lt;/b&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pill" title="Auto-refresh"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>Updates: &lt;b&gt;every minute&lt;/b&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="grid" id="grid"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="footer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;Logic: &lt;code class="kbd"&gt;Online&lt;/code&gt; if current time falls inside the EST coverage schedule; &lt;code class="kbd"&gt;Offline&lt;/code&gt; otherwise.&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="onlineCount"&gt;—&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>/**</p>
-<p class="p1"><span class="Apple-converted-space">     </span>* Notes:</p>
-<p class="p1"><span class="Apple-converted-space">     </span>* - Uses fixed GMT offsets (no DST adjustment), matching your provided offsets.</p>
-<p class="p1"><span class="Apple-converted-space">     </span>* - Coverage schedule is evaluated in EST (GMT-5).</p>
-<p class="p1"><span class="Apple-converted-space">     </span>*/</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const TEAM = [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Greg Zwickl", role: "VP, Web Development", email: "greg.zwickl@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"GZ", color:"#1e40af" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Maryam Ali", role: "Web Project Manager", email: "maryam.ali@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"MA", color:"#7c3aed" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Laurentiu Danu", role: "Web Developer", email: "laurentiu.danu@gofishdigital.com", tzLabel: "EEST", gmtOffsetHours:<span class="Apple-converted-space">  </span>2, initials:"LD", color:"#3b82f6" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Erwin Bantilan", role: "Web Developer", email: "erwin.bantilan@gofishdigital.com", tzLabel: "PHT", gmtOffsetHours:<span class="Apple-converted-space">  </span>8, initials:"EB", color:"#8b5cf6" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Corey King", role: "Web Developer", email: "corey.king@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"CK", color:"#0ea5e9" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Eli Fuentes", role: "Jr. Web Developer", email: "elias.fuentes@gofishdigital.com", tzLabel: "PST", gmtOffsetHours: -8, initials:"EF", color:"#14b8a6" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Sam Shumake", role: "Web Developer", email: "sam.shumake@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"SS", color:"#f97316" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Vijay Mishra", role: "Web Developer", email: "vijay.mishra@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"VM", color:"#2563eb" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Donald Ngo", role: "Web Production Analyst", email: "donald.ngo@gofishdigital.com", tzLabel: "PHT", gmtOffsetHours:<span class="Apple-converted-space">  </span>8, initials:"DN", color:"#6366f1" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Parker Jenkins", role: "Web Production Intern", email: "parker.jenkins@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"PJ", color:"#84cc16" },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const COVERAGE_TZ = { label: "EST", gmtOffsetHours: -5 };</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Coverage windows in EST (GMT-5): day 0=Sun ... 6=Sat</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const COVERAGE_SCHEDULE = [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ day: 1, start: "12:00", end: "17:00" }, // Mon</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ day: 2, start: "12:00", end: "17:00" }, // Tue</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ day: 3, start: "08:00", end: "15:00" }, // Wed</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ day: 4, start: "12:00", end: "17:00" }, // Thu</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const pad2 = (n) =&gt; String(n).padStart(2, "0");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const parseHHMM = (hhmm) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [h, m] = hhmm.split(":").map(Number);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return { h, m: isNaN(m) ? 0 : m };</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const minutesSinceMidnight = (date) =&gt; date.getHours() * 60 + date.getMinutes();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function dateInGmtOffset(nowLocal, gmtOffsetHours){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const utcMillis = nowLocal.getTime() + nowLocal.getTimezoneOffset() * 60 * 1000;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return new Date(utcMillis + gmtOffsetHours * 60 * 60 * 1000);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function formatTime(date){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const h = date.getHours();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const m = date.getMinutes();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const ampm = h &gt;= 12 ? "PM" : "AM";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const hr12 = ((h + 11) % 12) + 1;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return `${hr12}:${pad2(m)} ${ampm}`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function coverageStatus(nowLocal){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const nowCoverage = dateInGmtOffset(nowLocal, COVERAGE_TZ.gmtOffsetHours);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const dow = nowCoverage.getDay();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const mins = minutesSinceMidnight(nowCoverage);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const todays = COVERAGE_SCHEDULE.filter(s =&gt; s.day === dow);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!todays.length) return { online:false, nowCoverage };</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (const w of todays){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const start = parseHHMM(w.start);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const end = parseHHMM(w.end);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const startM = start.h * 60 + start.m;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const endM = end.h * 60 + end.m;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (mins &gt;= startM &amp;&amp; mins &lt; endM){</p>
-<p class="p1"><span class="Apple-converted-space">          </span>return { online:true, nowCoverage };</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return { online:false, nowCoverage };</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function buildCard(member){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const el = document.createElement("a");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.className = "card";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.href = `mailto:${member.email}`;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.title = member.email;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.style.textDecoration = "none";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.style.color = "inherit";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="avatar" style="background:${member.color}"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>${member.initials}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="dot offline" data-dot&gt;&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="meta"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="top"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="name"&gt;${member.name}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="role"&gt;${member.role}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="right"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="time" data-time&gt;—&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="tz"&gt;${member.tzLabel} (GMT${member.gmtOffsetHours &gt;= 0 ? "+" : ""}${member.gmtOffsetHours})&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="statusText offline" data-status&gt;Offline&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="mail" aria-hidden="true" title="Email"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>✉️</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>el._refs = {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>dot: el.querySelector("[data-dot]"),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>time: el.querySelector("[data-time]"),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>status: el.querySelector("[data-status]"),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el._member = member;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return el;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const grid = document.getElementById("grid");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const cards = TEAM.map(m =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const c = buildCard(m);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>grid.appendChild(c);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return c;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const coverageDotEl = document.getElementById("coverageDot");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const coverageNowEl = document.getElementById("coverageNow");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const onlineCountEl = document.getElementById("onlineCount");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function setDot(dotEl, state){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>dotEl.classList.remove("online","away","offline");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>dotEl.classList.add(state);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function setStatusText(textEl, state, label){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>textEl.classList.remove("online","away","offline");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>textEl.classList.add(state);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>textEl.textContent = label;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function tick(){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const now = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const cov = coverageStatus(now);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Header indicator (coverage window status)</p>
-<p class="p1"><span class="Apple-converted-space">      </span>coverageDotEl.style.background = cov.online ? "var(--green)" : "var(--gray)";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>coverageDotEl.style.boxShadow = cov.online ? "0 0 0 3px rgba(34,197,94,.18)" : "0 0 0 3px rgba(156,163,175,.22)";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>coverageNowEl.textContent = ` • Now: ${formatTime(cov.nowCoverage)} ${COVERAGE_TZ.label}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Everyone’s local time always updates.</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Activity indicator is based on coverage window (shared schedule).</p>
-<p class="p1"><span class="Apple-converted-space">      </span>let onlineCount = 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (const card of cards){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const m = card._member;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const local = dateInGmtOffset(now, m.gmtOffsetHours);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>card._refs.time.textContent = formatTime(local);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (cov.online){</p>
-<p class="p1"><span class="Apple-converted-space">          </span>onlineCount++;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>setDot(card._refs.dot, "online");</p>
-<p class="p1"><span class="Apple-converted-space">          </span>setStatusText(card._refs.status, "online", "Online");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>setDot(card._refs.dot, "offline");</p>
-<p class="p1"><span class="Apple-converted-space">          </span>setStatusText(card._refs.status, "offline", "Offline");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>onlineCountEl.textContent = `${onlineCount} of ${TEAM.length} online`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>tick();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setInterval(tick, 60 * 1000);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <div class="header">
+    <div>
+      <div class="titleRow">
+        <div class="statusDot" id="coverageDot" aria-hidden="true"></div>
+        <h1>Team Availability</h1>
+      </div>
+      <div class="sub" id="coverageText">
+        Coverage window (EST / GMT-5): Mon 12–5, Tue 12–5, Wed 8–3, Thu 12–5 (~22 hrs/wk).
+        <span id="coverageNow"></span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+      <div class="pill" title="Schedule reference timezone">
+        Schedule timezone: <b>EST (GMT-5)</b>
+      </div>
+      <div class="pill" title="Auto-refresh">
+        Updates: <b>every minute</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="footer">
+    <div>Logic: <code class="kbd">Online</code> if current time falls inside the EST coverage schedule; <code class="kbd">Offline</code> otherwise.</div>
+    <div id="onlineCount">—</div>
+  </div>
+
+  <script>
+    /**
+     * Notes:
+     * - Uses fixed GMT offsets (no DST adjustment), matching your provided offsets.
+     * - Coverage schedule is evaluated in EST (GMT-5).
+     */
+
+    const TEAM = [
+      { name: "Greg Zwickl", role: "VP, Web Development", email: "greg.zwickl@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"GZ", color:"#1e40af" },
+      { name: "Maryam Ali", role: "Web Project Manager", email: "maryam.ali@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"MA", color:"#7c3aed" },
+      { name: "Laurentiu Danu", role: "Web Developer", email: "laurentiu.danu@gofishdigital.com", tzLabel: "EEST", gmtOffsetHours:  2, initials:"LD", color:"#3b82f6" },
+      { name: "Erwin Bantilan", role: "Web Developer", email: "erwin.bantilan@gofishdigital.com", tzLabel: "PHT", gmtOffsetHours:  8, initials:"EB", color:"#8b5cf6" },
+      { name: "Corey King", role: "Web Developer", email: "corey.king@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"CK", color:"#0ea5e9" },
+      { name: "Eli Fuentes", role: "Jr. Web Developer", email: "elias.fuentes@gofishdigital.com", tzLabel: "PST", gmtOffsetHours: -8, initials:"EF", color:"#14b8a6" },
+      { name: "Sam Shumake", role: "Web Developer", email: "sam.shumake@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"SS", color:"#f97316" },
+      { name: "Vijay Mishra", role: "Web Developer", email: "vijay.mishra@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"VM", color:"#2563eb" },
+      { name: "Donald Ngo", role: "Web Production Analyst", email: "donald.ngo@gofishdigital.com", tzLabel: "PHT", gmtOffsetHours:  8, initials:"DN", color:"#6366f1" },
+      { name: "Parker Jenkins", role: "Web Production Intern", email: "parker.jenkins@gofishdigital.com", tzLabel: "EST", gmtOffsetHours: -5, initials:"PJ", color:"#84cc16" },
+    ];
+
+    const COVERAGE_TZ = { label: "EST", gmtOffsetHours: -5 };
+
+    // Coverage windows in EST (GMT-5): day 0=Sun ... 6=Sat
+    const COVERAGE_SCHEDULE = [
+      { day: 1, start: "12:00", end: "17:00" }, // Mon
+      { day: 2, start: "12:00", end: "17:00" }, // Tue
+      { day: 3, start: "08:00", end: "15:00" }, // Wed
+      { day: 4, start: "12:00", end: "17:00" }, // Thu
+    ];
+
+    const pad2 = (n) => String(n).padStart(2, "0");
+    const parseHHMM = (hhmm) => {
+      const [h, m] = hhmm.split(":").map(Number);
+      return { h, m: isNaN(m) ? 0 : m };
+    };
+    const minutesSinceMidnight = (date) => date.getHours() * 60 + date.getMinutes();
+
+    function dateInGmtOffset(nowLocal, gmtOffsetHours){
+      const utcMillis = nowLocal.getTime() + nowLocal.getTimezoneOffset() * 60 * 1000;
+      return new Date(utcMillis + gmtOffsetHours * 60 * 60 * 1000);
+    }
+
+    function formatTime(date){
+      const h = date.getHours();
+      const m = date.getMinutes();
+      const ampm = h >= 12 ? "PM" : "AM";
+      const hr12 = ((h + 11) % 12) + 1;
+      return `${hr12}:${pad2(m)} ${ampm}`;
+    }
+
+    function coverageStatus(nowLocal){
+      const nowCoverage = dateInGmtOffset(nowLocal, COVERAGE_TZ.gmtOffsetHours);
+      const dow = nowCoverage.getDay();
+      const mins = minutesSinceMidnight(nowCoverage);
+
+      const todays = COVERAGE_SCHEDULE.filter(s => s.day === dow);
+      if (!todays.length) return { online:false, nowCoverage };
+
+      for (const w of todays){
+        const start = parseHHMM(w.start);
+        const end = parseHHMM(w.end);
+        const startM = start.h * 60 + start.m;
+        const endM = end.h * 60 + end.m;
+        if (mins >= startM && mins < endM){
+          return { online:true, nowCoverage };
+        }
+      }
+      return { online:false, nowCoverage };
+    }
+
+    function buildCard(member){
+      const el = document.createElement("a");
+      el.className = "card";
+      el.href = `mailto:${member.email}`;
+      el.title = member.email;
+      el.style.textDecoration = "none";
+      el.style.color = "inherit";
+
+      el.innerHTML = `
+        <div class="avatar" style="background:${member.color}">
+          ${member.initials}
+          <span class="dot offline" data-dot></span>
+        </div>
+        <div class="meta">
+          <div class="top">
+            <p class="name">${member.name}</p>
+          </div>
+          <p class="role">${member.role}</p>
+        </div>
+        <div class="right">
+          <div class="time" data-time>—</div>
+          <div class="tz">${member.tzLabel} (GMT${member.gmtOffsetHours >= 0 ? "+" : ""}${member.gmtOffsetHours})</div>
+          <div class="statusText offline" data-status>Offline</div>
+          <span class="mail" aria-hidden="true" title="Email">
+            ✉️
+          </span>
+        </div>
+      `;
+
+      el._refs = {
+        dot: el.querySelector("[data-dot]"),
+        time: el.querySelector("[data-time]"),
+        status: el.querySelector("[data-status]"),
+      };
+      el._member = member;
+      return el;
+    }
+
+    const grid = document.getElementById("grid");
+    const cards = TEAM.map(m => {
+      const c = buildCard(m);
+      grid.appendChild(c);
+      return c;
+    });
+
+    const coverageDotEl = document.getElementById("coverageDot");
+    const coverageNowEl = document.getElementById("coverageNow");
+    const onlineCountEl = document.getElementById("onlineCount");
+
+    function setDot(dotEl, state){
+      dotEl.classList.remove("online","away","offline");
+      dotEl.classList.add(state);
+    }
+    function setStatusText(textEl, state, label){
+      textEl.classList.remove("online","away","offline");
+      textEl.classList.add(state);
+      textEl.textContent = label;
+    }
+
+    function tick(){
+      const now = new Date();
+      const cov = coverageStatus(now);
+
+      // Header indicator (coverage window status)
+      coverageDotEl.style.background = cov.online ? "var(--green)" : "var(--gray)";
+      coverageDotEl.style.boxShadow = cov.online ? "0 0 0 3px rgba(34,197,94,.18)" : "0 0 0 3px rgba(156,163,175,.22)";
+      coverageNowEl.textContent = ` • Now: ${formatTime(cov.nowCoverage)} ${COVERAGE_TZ.label}`;
+
+      // Everyone’s local time always updates.
+      // Activity indicator is based on coverage window (shared schedule).
+      let onlineCount = 0;
+      for (const card of cards){
+        const m = card._member;
+        const local = dateInGmtOffset(now, m.gmtOffsetHours);
+        card._refs.time.textContent = formatTime(local);
+
+        if (cov.online){
+          onlineCount++;
+          setDot(card._refs.dot, "online");
+          setStatusText(card._refs.status, "online", "Online");
+        } else {
+          setDot(card._refs.dot, "offline");
+          setStatusText(card._refs.status, "offline", "Offline");
+        }
+      }
+
+      onlineCountEl.textContent = `${onlineCount} of ${TEAM.length} online`;
+    }
+
+    tick();
+    setInterval(tick, 60 * 1000);
+  </script>
 </body>
 </html>
