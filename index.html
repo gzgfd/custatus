@@ -118,11 +118,10 @@
   }
   .status-chip.offline .mini-dot{ background:#9ca3af; }
 
-  .right { text-align: right; flex-shrink: 0; min-width: 84px; }
+  .right { text-align: right; flex-shrink: 0; min-width: 92px; }
   .time { font-size: 14px; font-weight: 900; font-variant-numeric: tabular-nums; }
   .tz { font-size: 11px; color: #6b7280; margin-top: 1px; }
 
-  /* Offline card treatment (more obvious) */
   .card.is-offline{
     background: #eef0f3;
     border-color: #cfd5dd;
@@ -139,7 +138,7 @@
 
 <div class="header">
   <div class="header-left">
-    <h1></h1>
+    <h1>🟢 Team Availability</h1>
     <p id="summary"></p>
   </div>
 
@@ -157,16 +156,18 @@
 
 <script>
 const team = [
-  { name:"Greg Zwickl", role:"VP, Web Development", email:"greg.zwickl@gofishdigital.com", tz:"EST", offset:-5, initials:"GZ", color:"#1e40af" },
-  { name:"Maryam Ali", role:"Web Project Manager", email:"maryam.ali@gofishdigital.com", tz:"EST", offset:-5, initials:"MA", color:"#7c3aed" },
-  { name:"Laurentiu Danu", role:"Web Developer", email:"laurentiu.danu@gofishdigital.com", tz:"EEST", offset:2, initials:"LD", color:"#3b82f6" },
-  { name:"Erwin Bantilan", role:"Web Developer", email:"erwin.bantilan@gofishdigital.com", tz:"PHT", offset:8, initials:"EB", color:"#8b5cf6" },
-  { name:"Corey King", role:"Web Developer", email:"corey.king@gofishdigital.com", tz:"EST", offset:-5, initials:"CK", color:"#ec4899" },
-  { name:"Eli Fuentes", role:"Jr. Web Developer", email:"elias.fuentes@gofishdigital.com", tz:"PST", offset:-8, initials:"EF", color:"#14b8a6" },
-  { name:"Sam Shumake", role:"Web Developer", email:"sam.shumake@gofishdigital.com", tz:"EST", offset:-5, initials:"SS", color:"#f97316" },
-  { name:"Vijay Mishra", role:"Web Developer", email:"vijay.mishra@gofishdigital.com", tz:"EST", offset:-5, initials:"VM", color:"#0ea5e9" },
-  { name:"Donald Ngo", role:"Web Production Analyst", email:"donald.ngo@gofishdigital.com", tz:"PHT", offset:8, initials:"DN", color:"#6366f1" },
-  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tz:"EST", offset:-5, initials:"PJ", color:"#84cc16",
+  { name:"Greg Zwickl", role:"VP, Web Development", email:"greg.zwickl@gofishdigital.com", tzLabel:"ET", timeZone:"America/New_York", initials:"GZ", color:"#1e40af" },
+  { name:"Maryam Ali", role:"Web Project Manager", email:"maryam.ali@gofishdigital.com", tzLabel:"ET", timeZone:"America/New_York", initials:"MA", color:"#7c3aed" },
+  { name:"Laurentiu Danu", role:"Web Developer", email:"laurentiu.danu@gofishdigital.com", tzLabel:"EET/EEST", timeZone:"Europe/Bucharest", initials:"LD", color:"#3b82f6" },
+  { name:"Erwin Bantilan", role:"Web Developer", email:"erwin.bantilan@gofishdigital.com", tzLabel:"PHT", timeZone:"Asia/Manila", initials:"EB", color:"#8b5cf6" },
+  { name:"Corey King", role:"Web Developer", email:"corey.king@gofishdigital.com", tzLabel:"ET", timeZone:"America/New_York", initials:"CK", color:"#ec4899" },
+  { name:"Eli Fuentes", role:"Jr. Web Developer", email:"elias.fuentes@gofishdigital.com", tzLabel:"PT", timeZone:"America/Los_Angeles", initials:"EF", color:"#14b8a6" },
+  { name:"Sam Shumake", role:"Web Developer", email:"sam.shumake@gofishdigital.com", tzLabel:"ET", timeZone:"America/New_York", initials:"SS", color:"#f97316" },
+  { name:"Vijay Mishra", role:"Web Developer", email:"vijay.mishra@gofishdigital.com", tzLabel:"ET", timeZone:"America/New_York", initials:"VM", color:"#0ea5e9" },
+  { name:"Donald Ngo", role:"Web Production Analyst", email:"donald.ngo@gofishdigital.com", tzLabel:"PHT", timeZone:"Asia/Manila", initials:"DN", color:"#6366f1" },
+
+  // If you still want Parker’s custom schedule in ET:
+  { name:"Parker Jenkins", role:"Web Production Intern", email:"parker.jenkins@gofishdigital.com", tzLabel:"ET", timeZone:"America/New_York", initials:"PJ", color:"#84cc16",
     schedule:{0:null,1:[12,17],2:[12,17],3:[8,15],4:[12,17],5:null,6:null}
   },
 ];
@@ -174,10 +175,36 @@ const team = [
 const statusLabel = { online:"Online", offline:"Offline" };
 const statusOrder = { online:0, offline:1 };
 
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function formatHHMM12(h, m){
   const period = h >= 12 ? "PM" : "AM";
   const dh = h === 0 ? 12 : h > 12 ? h - 12 : h;
   return dh + ":" + String(m).padStart(2,"0") + " " + period;
+}
+
+// DST-safe: get hour/minute/day-of-week in any IANA timezone
+function getZonedParts(timeZone){
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    weekday: "short"
+  }).formatToParts(now);
+
+  const get = (type) => parts.find(p => p.type === type)?.value;
+  const hour = parseInt(get("hour"), 10);
+  const minute = parseInt(get("minute"), 10);
+  const weekday = get("weekday"); // Sun, Mon, Tue...
+
+  const dayMap = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
+  const day = dayMap[weekday];
+
+  return { hour, minute, day };
 }
 
 function getEtNowString(){
@@ -192,57 +219,37 @@ function getEtNowString(){
 
 /**
  * Rules:
- * - Default hours (for everyone without a custom schedule): Online 8:00 AM–4:59 PM local time, weekdays only.
- *   Offline at 5:00 PM sharp.
- * - Parker keeps the provided custom schedule (in his local time), no "away" state.
+ * - Default: Online 8:00 AM–4:59 PM local time, weekdays only. Offline at 5:00 PM sharp.
+ * - Parker: uses provided schedule (interpreted in his timeZone), offline otherwise.
  */
-function getStatus(dev) {
-  const now = new Date();
-  const h = (now.getUTCHours() + dev.offset + 24) % 24;
-  const m = now.getUTCMinutes();
+function getStatus(dev){
+  const { hour:h, minute:m, day } = getZonedParts(dev.timeZone);
   const time = formatHHMM12(h, m);
-
-  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours() + dev.offset));
-  const day = d.getUTCDay();
 
   let status = "offline";
 
-  // Custom schedule (Parker)
-  if (dev.schedule) {
+  if (dev.schedule){
     const hours = dev.schedule[day];
-    if (hours) {
-      if (h >= hours[0] && h < hours[1]) status = "online";
-      else status = "offline";
-    } else {
-      status = "offline";
-    }
+    if (hours && h >= hours[0] && h < hours[1]) status = "online";
   } else {
-    // Default: weekdays only, online at 8:00, offline at 5:00 sharp (local)
     const weekday = day >= 1 && day <= 5;
-    if (weekday) {
-      if (h >= 8 && h < 17) status = "online"; // 8:00–16:59
-      else status = "offline";                 // 17:00+
-    }
+    if (weekday && h >= 8 && h < 17) status = "online"; // 8:00–16:59
   }
 
   return { status, time };
 }
 
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function update() {
+function update(){
   document.getElementById("etNow").textContent = getEtNowString();
 
   const sorted = [...team].sort((a,b) => statusOrder[getStatus(a).status] - statusOrder[getStatus(b).status]);
   const onlineCount = team.filter(d => getStatus(d).status === "online").length;
-  document.getElementById("summary").textContent = onlineCount + " of " + team.length + " online · updates every minute";
+  document.getElementById("summary").textContent =
+    onlineCount + " of " + team.length + " online · updates every minute";
 
   document.getElementById("grid").innerHTML = sorted.map(d => {
     const { status, time } = getStatus(d);
     const offlineClass = status === "offline" ? " is-offline" : "";
-    const label = statusLabel[status];
     return `<a class="card${offlineClass}" href="mailto:${escapeHtml(d.email)}" title="${escapeHtml(d.email)}">
       <div class="avatar" style="background:${escapeHtml(d.color)}">
         ${escapeHtml(d.initials)}
@@ -254,13 +261,13 @@ function update() {
         <div class="status-row">
           <div class="status-chip ${status}">
             <span class="mini-dot"></span>
-            ${escapeHtml(label)}
+            ${escapeHtml(statusLabel[status])}
           </div>
         </div>
       </div>
       <div class="right">
         <div class="time">${escapeHtml(time)}</div>
-        <div class="tz">${escapeHtml(d.tz)}</div>
+        <div class="tz">${escapeHtml(d.tzLabel)}</div>
       </div>
     </a>`;
   }).join("");
